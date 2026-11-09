@@ -1,0 +1,75 @@
+---
+import { results } from '../data/master';
+---
+
+<section id="issues" class="soft-bg">
+  <div class="wrap">
+    <header class="section-head" data-reveal>
+      <span class="section-eyebrow">С чем приходят</span>
+      <h2>Улучшения уже после первого&nbsp;сеанса.</h2>
+      <p>
+        Работаю с&nbsp;телом, мышлением и&nbsp;эмоциями одновременно, поэтому
+        изменения часто заметны сразу. Вот с&nbsp;чем чаще всего ко&nbsp;мне
+        обращаются.
+      </p>
+    </header>
+
+    <ol class="grid">
+      {results.map((r, i) => (
+        <li data-reveal data-reveal-delay={Math.min(i * 80, 320)}>
+          <span class="n">0{i + 1}</span>
+          <span class="t">{r}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .grid li {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 26px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .grid li:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-line);
+    box-shadow: 0 20px 36px -24px rgba(31, 25, 21, 0.15);
+  }
+  .n {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+  .t {
+    font-family: var(--font-serif);
+    font-size: clamp(19px, 1.8vw, 22px);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  @media (max-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

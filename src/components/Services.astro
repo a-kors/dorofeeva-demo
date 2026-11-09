@@ -1,0 +1,450 @@
+---
+import { master, individual, groupPractices, groupPrices, courses } from '../data/master';
+---
+
+<section id="services" class="sv">
+  <div class="wrap">
+    <header class="section-head" data-reveal>
+      <span class="section-eyebrow">Направления и&nbsp;цены</span>
+      <h2>Сеанс один на&nbsp;один, практика в&nbsp;группе или курс.</h2>
+      <p>
+        Начните с&nbsp;консультации или с&nbsp;телесного сеанса. Если не&nbsp;знаете,
+        что выбрать, напишите: подскажу, с&nbsp;чего начать именно вам.
+      </p>
+    </header>
+
+    <h3 class="sub-h" data-reveal>Индивидуальные сеансы</h3>
+    <div class="grid">
+      {individual.map((s, i) => (
+        <article
+          class={`card ${s.highlight ? 'card--on' : ''}`}
+          data-reveal
+          data-reveal-delay={Math.min(i * 90, 300)}
+        >
+          <h4>{s.title}</h4>
+          <p class="duration">{s.meta}</p>
+
+          <div class="price">
+            <span class={`price-big ${s.price ? '' : 'price-big--sm'}`}>{s.price || 'По запросу'}</span>
+            <span class="price-note">{s.price ? 'за сеанс' : 'уточните в сообщениях'}</span>
+          </div>
+
+          <p class="pitch">{s.text}</p>
+          {s.note && <p class="note">{s.note}</p>}
+
+          <a class={`btn ${s.highlight ? 'btn-primary' : 'btn-secondary'}`} href={master.primary}>
+            <span>Записаться</span>
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </article>
+      ))}
+    </div>
+
+    <h3 class="sub-h sub-h--gap" data-reveal>Групповые практики</h3>
+    <div class="practices">
+      {groupPractices.map((g, i) => (
+        <article class="pr" data-reveal data-reveal-delay={Math.min(i * 60, 300)}>
+          <span class="pr-n">{String(i + 1).padStart(2, '0')}</span>
+          <h4>{g.title}</h4>
+          <p>{g.text}</p>
+        </article>
+      ))}
+      <article class="pr pr--price" data-reveal data-reveal-delay="300">
+        <span class="pr-n">Стоимость</span>
+        <ul class="gp-prices">
+          {groupPrices.map((g) => (
+            <li><span>{g.title}</span><b>{g.price}</b></li>
+          ))}
+        </ul>
+        <a class="btn btn-primary" href={master.primary}>
+          <span>Узнать расписание</span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </article>
+    </div>
+
+    <h3 class="sub-h" data-reveal>Курсы</h3>
+    <div class="courses">
+      {courses.map((c, i) => (
+        <article class="course" data-reveal data-reveal-delay={i * 120}>
+          <div class="course-top">
+            <span class="kind">{c.kind}</span>
+            <span class="course-price">{c.price}</span>
+          </div>
+          <h4>{c.title}</h4>
+          <p class="course-sub">{c.sub}</p>
+          <p class="pitch">{c.text}</p>
+          <ul class="points">
+            {c.points.map((pt) => <li>{pt}</li>)}
+          </ul>
+          <p class="includes">{c.includes}</p>
+          <a class="btn btn-secondary" href={master.primary}>
+            <span>Узнать подробнее</span>
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </article>
+      ))}
+    </div>
+
+    <aside class="gift" data-reveal>
+      <div>
+        <span class="kind">Подарочный сертификат</span>
+        <p>
+          Можно подарить ресурсный аромат, палсинг, телесный или психологический
+          сеанс, практику гвоздестояния. Стоимость зависит от&nbsp;направления.
+        </p>
+      </div>
+      <a class="btn btn-secondary" href={master.primary}>
+        <span>Заказать сертификат</span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .sv {
+    background: var(--bg);
+  }
+  .section-head {
+    max-width: 720px;
+    margin-bottom: 56px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .card {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 28px 24px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 24px 40px -24px rgba(31, 25, 21, 0.18);
+  }
+  .card--on {
+    background: var(--ink);
+    color: #ffffff;
+    border-color: var(--ink);
+  }
+  .card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    min-height: 22px;
+  }
+  .kind {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .card--on .kind {
+    color: var(--accent-line);
+  }
+  .pin {
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--accent-soft);
+    padding: 4px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .sub-h {
+    font-family: var(--font-serif);
+    font-size: clamp(22px, 2.4vw, 28px);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    margin: 0 0 20px;
+    color: var(--ink);
+  }
+  .card h4,
+  .pr h4,
+  .course h4 {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin: 0;
+    font-weight: 400;
+  }
+  .card--on h4 {
+    color: #ffffff;
+  }
+  .duration {
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin: 0;
+  }
+  .card--on .duration {
+    color: var(--accent-line);
+  }
+  .price {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .card--on .price {
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+  .price-big {
+    font-family: var(--font-serif);
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .card--on .price-big {
+    color: #ffffff;
+  }
+  .price-note {
+    font-size: 12px;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+  .card--on .price-note {
+    color: var(--accent-line);
+  }
+  .pitch {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ink-muted);
+    margin: 0;
+    flex-grow: 1;
+  }
+  .card--on .pitch {
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .card .btn {
+    margin-top: 4px;
+    width: 100%;
+    justify-content: center;
+    font-size: 14px;
+    padding: 12px 16px;
+  }
+  .card--on .btn-primary {
+    background: var(--accent);
+    color: #ffffff;
+  }
+  .card--on .btn-primary:hover {
+    background: #4e5c38;
+  }
+
+  .note {
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+    color: var(--ink-soft);
+  }
+  .card--on .note {
+    color: var(--accent-line);
+  }
+
+  .sub-h--gap {
+    margin-top: 72px;
+  }
+  .price-big--sm {
+    font-size: 22px;
+  }
+  .pr.pr--price {
+    background: var(--ink);
+    color: #ffffff;
+    justify-content: space-between;
+  }
+  .pr--price .pr-n {
+    color: var(--accent-line);
+  }
+  .gp-prices {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .gp-prices li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.72);
+  }
+  .gp-prices b {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 24px;
+    color: #ffffff;
+  }
+  .pr--price .btn {
+    margin-top: 8px;
+    font-size: 14px;
+    padding: 11px 16px;
+    justify-content: center;
+    background: var(--accent);
+    color: #ffffff;
+  }
+  .practices {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .pr {
+    background: var(--bg-soft);
+    border-radius: 16px;
+    padding: 22px 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .pr-n {
+    font-family: var(--font-serif);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+  .pr h4 {
+    font-size: 19px;
+  }
+  .pr p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-muted);
+  }
+
+  .courses {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .sub-h + .courses,
+  .courses {
+    margin-bottom: 0;
+  }
+  .practices + .sub-h,
+  .courses {
+    margin-top: 0;
+  }
+  .practices {
+    margin-bottom: 72px;
+  }
+  .grid {
+    margin-bottom: 0;
+  }
+  .course {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 30px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .course-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .course-price {
+    font-family: var(--font-serif);
+    font-size: 26px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .course-sub {
+    margin: 0;
+    color: var(--accent);
+    font-style: italic;
+    font-family: var(--font-serif);
+    font-size: 17px;
+  }
+  .points {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .points li {
+    position: relative;
+    padding-left: 18px;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+  .points li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent-line);
+  }
+  .includes {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+    flex-grow: 1;
+  }
+  .course .btn {
+    align-self: flex-start;
+    font-size: 14px;
+    padding: 12px 18px;
+  }
+
+  .gift {
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px 40px;
+    flex-wrap: wrap;
+    padding: 26px 30px;
+    border: 1px dashed var(--accent-line);
+    border-radius: 18px;
+    background: var(--accent-soft);
+  }
+  .gift p {
+    margin: 8px 0 0;
+    max-width: 640px;
+    color: var(--ink-muted);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .practices {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 760px) {
+    .courses {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .grid,
+    .practices {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

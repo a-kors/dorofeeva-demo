@@ -1,0 +1,271 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { master, reviewTexts } from '../data/master';
+
+const imgs = import.meta.glob<{ default: ImageMetadata }>('/src/assets/reviews/*.jpg', { eager: true });
+const shots = Object.entries(imgs)
+  .sort(([a], [b]) => {
+    const ai = parseInt(a.match(/review-(\d+)/)?.[1] || '0', 10);
+    const bi = parseInt(b.match(/review-(\d+)/)?.[1] || '0', 10);
+    return ai - bi;
+  })
+  .map(([, mod]) => mod.default);
+
+type Item = { type: 'shot'; img: ImageMetadata; n: number } | { type: 'text'; r: (typeof reviewTexts)[number] };
+const items: Item[] = [];
+const max = Math.max(shots.length, reviewTexts.length);
+for (let i = 0; i < max; i++) {
+  if (shots[i]) items.push({ type: 'shot', img: shots[i], n: i + 1 });
+  if (reviewTexts[i]) items.push({ type: 'text', r: reviewTexts[i] });
+}
+---
+
+<section id="reviews" class="rv">
+  <div class="wrap">
+    <header class="section-head" data-reveal>
+      <span class="section-eyebrow">Отзывы</span>
+      <h2>Что пишут после сеансов и&nbsp;практик.</h2>
+      <p>
+          Отзывы из&nbsp;2ГИС, где у&nbsp;центра оценка {master.rating}, и&nbsp;отзывы
+          участниц практик из&nbsp;сообщества во&nbsp;ВКонтакте.
+        </p>
+    </header>
+
+    <div class="rv__wall" data-wall>
+      <div class="rv__cols">
+        <a class="rc rc--score" href={master.twogis} target="_blank" rel="noopener" data-reveal>
+          <span class="rc__kind">2ГИС</span>
+          <span class="score">5,0</span>
+          <span class="stars" aria-hidden="true">★★★★★</span>
+          <p class="muted">{master.ratingCount}, {master.reviewsCount}. Читать все в&nbsp;2ГИС →</p>
+        </a>
+
+        {items.map((it, i) =>
+          it.type === 'shot' ? (
+            <a
+              class="rc rc--photo"
+              href={master.vk}
+              target="_blank"
+              rel="noopener"
+              data-reveal
+              data-reveal-delay={Math.min(i * 60, 300)}
+              aria-label={`Отзыв ${it.n}`}
+            >
+              <Image
+                src={it.img}
+                alt={`Отзыв из сообщества ВКонтакте, ${it.n}`}
+                widths={[320, 540]}
+                sizes="(max-width: 600px) 90vw, 360px"
+                format="webp"
+                loading="lazy"
+              />
+            </a>
+          ) : (
+            <a
+              class="rc rc--text"
+              href={master.twogis}
+              target="_blank"
+              rel="noopener"
+              data-reveal
+              data-reveal-delay={Math.min(i * 60, 300)}
+            >
+              <span class="stars" aria-hidden="true">★★★★★</span>
+              <p class="quote">«{it.r.text}»</p>
+              <p class="who">
+                <span class="name">{it.r.name}</span>
+                <span class="date">{it.r.date}, 2ГИС</span>
+              </p>
+            </a>
+          )
+        )}
+      </div>
+      <div class="rv__fade" aria-hidden="true"></div>
+    </div>
+
+    <div class="rv__footer">
+      <button class="btn btn-secondary" type="button" data-more>
+        <span>Показать все отзывы</span>
+        <span class="arrow" aria-hidden="true">↓</span>
+      </button>
+      <a class="btn btn-ghost" href={master.twogis} target="_blank" rel="noopener">
+        Все отзывы в&nbsp;2ГИС →
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-wall]').forEach((wall) => {
+    const section = wall.closest('section');
+    const btn = section?.querySelector<HTMLButtonElement>('[data-more]');
+    const fits = () => {
+      if (!wall.classList.contains('is-open') && wall.scrollHeight <= wall.clientHeight + 40) {
+        wall.classList.add('is-open');
+        if (btn) btn.style.display = 'none';
+      }
+    };
+    fits();
+    window.addEventListener('load', () => setTimeout(fits, 1200));
+    btn?.addEventListener('click', () => {
+      wall.classList.add('is-open');
+      btn.style.display = 'none';
+    });
+  });
+</script>
+
+<style>
+  .rv {
+    background: var(--bg-soft);
+  }
+  .rv__wall {
+    position: relative;
+    max-height: 1800px;
+    overflow: hidden;
+    transition: max-height 0.6s ease;
+    margin-bottom: 32px;
+  }
+  .rv__wall.is-open {
+    max-height: none;
+  }
+  .rv__wall.is-open .rv__fade {
+    display: none;
+  }
+  .rv__fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 220px;
+    background: linear-gradient(to bottom, rgba(241, 238, 227, 0), var(--bg-soft) 92%);
+    pointer-events: none;
+  }
+  .rv__cols {
+    columns: 3;
+    column-gap: 16px;
+  }
+  .rc {
+    display: block;
+    break-inside: avoid;
+    margin: 0 0 16px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow:
+      0 1px 2px rgba(31, 25, 21, 0.05),
+      0 6px 20px rgba(31, 25, 21, 0.06);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .rc:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 2px 4px rgba(31, 25, 21, 0.08),
+      0 18px 32px rgba(31, 25, 21, 0.1);
+  }
+  .rc--photo :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .rc__body {
+    padding: 18px 20px 20px;
+  }
+  .rc__kind {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .rc__body h3 {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    line-height: 1.22;
+    margin: 8px 0 8px;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .rc--score,
+  .rc--text {
+    padding: 24px 24px 22px;
+  }
+  .rc--score {
+    background: var(--ink);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .rc--score .rc__kind {
+    color: var(--accent-line);
+  }
+  .score {
+    font-family: var(--font-serif);
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .rc--score .muted {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 14px;
+    margin: 6px 0 0;
+  }
+  .stars {
+    color: #d8a24a;
+    letter-spacing: 0.12em;
+    font-size: 14px;
+  }
+  .quote {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--ink);
+    margin: 12px 0 18px;
+  }
+  .who {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    font-size: 13px;
+  }
+  .who .name {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .who .date {
+    color: var(--ink-soft);
+  }
+  .muted {
+    color: var(--ink-muted);
+  }
+
+  .rv__footer {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px 28px;
+    margin-top: 12px;
+  }
+
+  @media (max-width: 960px) {
+    .rv__wall {
+      max-height: 1600px;
+    }
+    .rv__cols {
+      columns: 2;
+    }
+  }
+  @media (max-width: 520px) {
+    .rv__wall {
+      max-height: 1800px;
+    }
+    .rv__cols {
+      columns: 1;
+    }
+  }
+</style>
